@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlist 🎀</title>
+    <style>
+        :root {
+            --pookie-pink: #fdf0f6;
+            --accent-pink: #ff85a1;
+            --glass: rgba(255, 255, 255, 0.6);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Georgia', serif;
+            background-color: var(--pookie-pink);
+            background-image: radial-gradient(circle at 50% 50%, rgba(255, 133, 161, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Bows in the background */
+        body::before, body::after {
+            content: '🎀';
+            position: absolute;
+            font-size: 6rem;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        body::before { top: 5%; left: 5%; transform: rotate(-20deg); }
+        body::after { bottom: 5%; right: 5%; transform: rotate(20deg); }
+
+        .player-container {
+            width: 90%;
+            max-width: 1000px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border-radius: 40px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 25px 50px rgba(255, 182, 193, 0.3);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: #d63384;
+            font-weight: 300;
+            margin: 10px 0;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #a16b8d;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            text-transform: lowercase;
+        }
+
+        /* The Grid - Fixed Nesting */
+        .playlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            max-height: 450px;
+            overflow-y: auto;
+            padding: 10px;
+            margin-bottom: 30px;
+        }
+
+        .playlist-grid::-webkit-scrollbar { width: 5px; }
+        .playlist-grid::-webkit-scrollbar-thumb { background: var(--accent-pink); border-radius: 10px; }
+
+        .song-card {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .song-card:hover {
+            transform: translateY(-5px);
+            background: #fff;
+            border-color: var(--accent-pink);
+        }
+
+        .title { font-weight: bold; font-size: 0.9rem; color: #4a4a4a; }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        audio {
+            width: 100%;
+            filter: hue-rotate(280deg) brightness(105%);
+        }
+    </style>
+</head>
+<body>
+
+<div class="player-container">
+    <div style="font-size: 2.5rem;">🎀</div>
+    <h1>LaLaLaLaLaLA</h1>
+    <p class="subtitle">Currently Obsessed</p>
+
+    <div class="playlist-grid">
+        <!-- All 10 Songs now correctly inside the grid -->
+        <div class="song-card" onclick="loadSong('Mexico Full Song (RiskyjaTT.CoM).mp3', 'Mexico')">
+            <span class="title">1. Mexico</span><span>♡</span>
+        </div>
+
+        <div class="song-card" onclick="loadSong('Guilty Song (RiskyjaTT.CoM).mp3', 'Guilty')">
+            <span class="title">2. Guilty</span><span>♡</span>
+        </div>
+
+        <div class="song-card" onclick="loadSong('Horn blow Remix.mp3', 'Horn Blow')">
+            <span class="title">3. Horn Blow</span><span>♡</span>
+        </div>
+
+        <div class="song-card" onclick="loadSong('Shanti - PagalNew.mp3', 'Shanti')">
+            <span class="title">4. Shanti</span><span>♡</span>
+        </div>
+
+        <div class="song-card" onclick="loadSong('Sheesha (Aakhya Mai Aakh Ghali Jo Bairan) - Sheesha (Aakhya Mai Aakh Ghali Jo Bairan) (320 kbps).mp3', 'Sheesha')">
+            <span class="title">5. Sheesha</span><span>♡</span>
+        </div>
+
+        <div class="song-card" onclick="loadSong('The Beast (RiskyjaTT.CoM).mp3', 'The Beast')">
+            <span class="title">6. The Beast</span><span>♡</span>
+        </div>
+
+        <div class="song-card" onclick="loadSong('Tutor.mp3', 'Tutor')">
+            <span class="title">7. Tutor</span><span>♡</span>
+        </div>
+
+        <div class="song-card" onclick="loadSong('Naal Nachna - Dhurandhar 320 Kbps.mp3', 'Naal Nachna')">
+            <span class="title">8. Naal Nachna</span><span>♡</span>
+        </div>
+
+        <div class="song-card" onclick="loadSong('IDK How.mp3', 'IDK How')">
+            <span class="title">9. IDK How</span><span>♡</span>
+        </div>
+
+        <div class="song-card" onclick="loadSong('Kodak King 320 Kbps.mp3', 'Kodak')">
+            <span class="title">10. Kodak</span><span>♡</span>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div id="now-playing" style="font-size: 0.9rem; color: #ed9dc5; font-weight: bold;">Select a track to play 🎀</div>
+        <audio id="main-audio" controls>
+            <source id="audio-src" src="" type="audio/mpeg">
+        </audio>
+    </div>
+</div>
+
+<script>
+    function loadSong(src, title) {
+        const audio = document.getElementById('main-audio');
+        const source = document.getElementById('audio-src');
+        const display = document.getElementById('now-playing');
+
+        source.src = src;
+        display.innerText = `Now Playing: ${title} ✨`;
+        audio.load();
+        audio.play();
+    }
+</script>
+
+</body>
+</html>
