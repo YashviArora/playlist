@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karan Aujla Ultimate Playlist 👑</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --bg1:#0f172a;
+  --bg2:#1e293b;
+  --glass:rgba(255,255,255,0.08);
+  --accent:#ff4d8d;
+  --accent2:#7c3aed;
+  --gold:#ffd166;
+  --text:#ffffff;
+  --light:#d1d5db;
+}
+
+body{
+  font-family:'Poppins',sans-serif;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding:30px 20px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  position:relative;
+}
+
+body::before{
+  content:'';
+  position:fixed;
+  width:500px;height:500px;
+  background:radial-gradient(circle,var(--accent),transparent 70%);
+  top:-150px;left:-120px;
+  opacity:0.3;filter:blur(30px);
+  pointer-events:none;
+}
+
+body::after{
+  content:'';
+  position:fixed;
+  width:450px;height:450px;
+  background:radial-gradient(circle,var(--accent2),transparent 70%);
+  bottom:-150px;right:-120px;
+  opacity:0.3;filter:blur(40px);
+  pointer-events:none;
+}
+
+.player-container{
+  margin:auto;
+  width:100%;
+  max-width:900px;
+  background:rgba(17,24,39,0.8);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:28px;
+  padding:35px;
+  box-shadow:0 10px 50px rgba(0,0,0,0.5);
+  position:relative;
+  z-index:10;
+}
+
+/* HEADER */
+.header{text-align:center;margin-bottom:28px;}
+.header .crown{font-size:3rem;margin-bottom:8px;animation:float 3s ease-in-out infinite;display:block;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+.header h1{color:white;font-size:2.8rem;font-weight:700;letter-spacing:1px;}
+.subtitle{color:var(--gold);margin-top:6px;font-size:0.9rem;letter-spacing:4px;text-transform:uppercase;}
+
+/* STATS BAR */
+.stats-bar{
+  display:flex;justify-content:center;gap:30px;
+  margin-bottom:22px;
+  padding:12px 20px;
+  background:rgba(255,255,255,0.05);
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.08);
+}
+.stat{text-align:center;}
+.stat-num{color:var(--gold);font-size:1.4rem;font-weight:700;}
+.stat-label{color:#94a3b8;font-size:0.72rem;text-transform:uppercase;letter-spacing:2px;}
+
+/* SEARCH */
+.search-container{margin-bottom:20px;position:relative;}
+.search-container .icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:1rem;color:#94a3b8;}
+#searchBar{
+  width:100%;padding:15px 20px 15px 44px;
+  border:none;outline:none;border-radius:14px;
+  background:rgba(255,255,255,0.08);
+  color:white;font-size:1rem;font-family:'Poppins',sans-serif;
+  border:1px solid rgba(255,255,255,0.1);
+  transition:0.3s;
+}
+#searchBar:focus{border-color:var(--accent);box-shadow:0 0 20px rgba(255,77,141,0.35);}
+#searchBar::placeholder{color:#64748b;}
+
+/* TOOLBAR */
+.toolbar{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:16px;
+}
+.filter-tabs{display:flex;gap:8px;}
+.tab-btn{
+  padding:7px 16px;border:1px solid rgba(255,255,255,0.12);
+  border-radius:30px;background:transparent;
+  color:#94a3b8;font-size:0.8rem;cursor:pointer;
+  font-family:'Poppins',sans-serif;transition:0.25s;
+}
+.tab-btn.active,.tab-btn:hover{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:white;border-color:transparent;
+}
+#song-count{color:#94a3b8;font-size:0.82rem;}
+
+/* PLAYLIST GRID */
+.playlist-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
+  max-height:520px;
+  overflow-y:auto;
+  padding-right:6px;
+  padding-bottom:4px;
+}
+.playlist-grid::-webkit-scrollbar{width:5px;}
+.playlist-grid::-webkit-scrollbar-thumb{
+  background:linear-gradient(var(--accent),var(--accent2));
+  border-radius:10px;
+}
+
+/* SONG CARD */
+.song-card{
+  width:100%;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px;
+  padding:16px 20px;
+  cursor:pointer;
+  transition:0.3s ease;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.song-card::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(255,77,141,0.15),rgba(124,58,237,0.18));
+  opacity:0;
+  transition:0.3s;
+}
+.song-card:hover::after,.song-card.active::after{opacity:1;}
+.song-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.4);}
+.song-card.active{
+  border-color:rgba(255,77,141,0.5);
+  box-shadow:0 0 20px rgba(255,77,141,0.2);
+}
+
+.track-num{
+  color:#475569;font-size:0.82rem;font-weight:600;
+  min-width:28px;text-align:center;position:relative;z-index:1;
+  transition:0.3s;
+}
+.song-card.active .track-num{color:var(--accent);}
+.song-card:hover .track-num .num{display:none;}
+.song-card:hover .track-num::after,.song-card.active .track-num::after{
+  content:'▶';font-size:0.9rem;
+}
+.song-card.active .track-num .num{display:none;}
+
+.song-info{flex:1;position:relative;z-index:1;}
+.title{color:white;font-size:1rem;font-weight:600;margin-bottom:3px;}
+.song-card.active .title{color:var(--gold);}
+.meta{color:#64748b;font-size:0.78rem;}
+
+.song-actions{display:flex;align-items:center;gap:12px;position:relative;z-index:1;}
+.heart{
+  color:#475569;font-size:1.1rem;
+  cursor:pointer;transition:0.2s;background:none;border:none;
+}
+.heart.liked{color:var(--accent);}
+.heart:hover{transform:scale(1.2);}
+.yt-tag{
+  color:var(--gold);text-decoration:none;font-size:0.78rem;
+  padding:4px 10px;border:1px solid rgba(255,209,102,0.3);
+  border-radius:20px;white-space:nowrap;transition:0.2s;
+}
+.yt-tag:hover{background:rgba(255,209,102,0.15);}
+
+/* Playing bars animation */
+.bars{display:none;align-items:flex-end;gap:2px;height:18px;}
+.song-card.active .bars{display:flex;}
+.song-card.active .track-num .num{display:none;}
+.bar{width:3px;background:var(--accent);border-radius:2px;animation:bounce 0.6s ease infinite alternate;}
+.bar:nth-child(2){animation-delay:0.15s;}
+.bar:nth-child(3){animation-delay:0.3s;}
+@keyframes bounce{
+  from{height:4px;}
+  to{height:18px;}
+}
+
+/* CONTROLS */
+.controls{
+  margin-top:24px;
+  background:rgba(255,255,255,0.06);
+  padding:24px;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,0.1);
+}
+#now-playing{
+  color:white;margin-bottom:16px;
+  font-size:0.95rem;text-align:center;
+  min-height:24px;
+}
+.player-buttons{
+  display:flex;justify-content:center;align-items:center;gap:12px;
+  margin-bottom:16px;
+}
+.ctrl-btn{
+  padding:9px 20px;border:1px solid rgba(255,255,255,0.15);
+  border-radius:30px;background:rgba(255,255,255,0.08);
+  color:white;font-size:0.82rem;cursor:pointer;
+  font-family:'Poppins',sans-serif;transition:0.25s;
+  display:flex;align-items:center;gap:6px;
+}
+.ctrl-btn:hover{background:rgba(255,255,255,0.15);}
+.ctrl-btn.active-btn{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-color:transparent;
+}
+audio{width:100%;border-radius:12px;}
+
+/* KEYBOARD HINT */
+.keyboard-hint{
+  text-align:center;color:#475569;
+  font-size:0.72rem;margin-top:10px;
+}
+kbd{
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:4px;padding:1px 6px;font-size:0.72rem;
+  color:#94a3b8;
+}
+
+/* FOOTER */
+.footer{margin-top:20px;text-align:center;color:#475569;font-size:0.82rem;}
+.footer span{color:var(--accent);}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .player-container{padding:20px 16px;}
+  .header h1{font-size:2rem;}
+  .stats-bar{gap:16px;}
+  .song-card{padding:13px 14px;gap:10px;}
+  .yt-tag{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="player-container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <span class="crown">👑</span>
+    <h1>Karan Aujla</h1>
+    <div class="subtitle">Ultimate Playlist Collection</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-num" id="total-songs">25</div>
+      <div class="stat-label">Songs</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">♾️</div>
+      <div class="stat-label">Vibes</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">👑</div>
+      <div class="stat-label">The King</div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-container">
+    <span class="icon">🔍</span>
+    <input type="text" id="searchBar" placeholder="Search your favorite Karan Aujla songs..." oninput="filterSongs()">
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="filter-tabs">
+      <button class="tab-btn active" onclick="filterTab(this,'all')">All</button>
+      <button class="tab-btn" onclick="filterTab(this,'liked')">❤️ Liked</button>
+    </div>
+    <span id="song-count">25 songs</span>
+  </div>
+
+  <!-- PLAYLIST -->
+  <div class="playlist-grid" id="playlist">
+
+    <div class="song-card" onclick="loadSong('Winning Speech.mp3','Winning Speech',this)">
+      <div class="track-num"><span class="num">1</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">Winning Speech</div>
+        <div class="meta">BTFU · 2023</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=winning+speech+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('Softly.mp3','Softly',this)">
+      <div class="track-num"><span class="num">2</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">Softly</div>
+        <div class="meta">BTFU · 2023</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=softly+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('Admirin You.mp3','Admirin You',this)">
+      <div class="track-num"><span class="num">3</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">Admirin You</div>
+        <div class="meta">BTFU · 2023</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=admirin+you+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('Mexico.mp3','Mexico',this)">
+      <div class="track-num"><span class="num">4</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">Mexico</div>
+        <div class="meta">BTFU · 2023</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=mexico+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('White Brown Black.mp3','White Brown Black',this)">
+      <div class="track-num"><span class="num">5</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">White Brown Black</div>
+        <div class="meta">BTFU · 2023</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=white+brown+black+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('Players.mp3','Players',this)">
+      <div class="track-num"><span class="num">6</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">Players</div>
+        <div class="meta">BTFU · 2023</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=players+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('Tauba Tauba.mp3','Tauba Tauba',this)">
+      <div class="track-num"><span class="num">7</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">Tauba Tauba</div>
+        <div class="meta">BTFU · 2023</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=tauba+tauba+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('On Top.mp3','On Top',this)">
+      <div class="track-num"><span class="num">8</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">On Top</div>
+        <div class="meta">BTFU · 2023</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=on+top+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('Hukam.mp3','Hukam',this)">
+      <div class="track-num"><span class="num">9</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">Hukam</div>
+        <div class="meta">BTFU · 2023</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=hukam+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('Chitta Kurta.mp3','Chitta Kurta',this)">
+      <div class="track-num"><span class="num">10</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">Chitta Kurta</div>
+        <div class="meta">BTFU · 2023</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=chitta+kurta+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('52 Bars.mp3','52 Bars',this)">
+      <div class="track-num"><span class="num">11</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">52 Bars</div>
+        <div class="meta">Single · 2021</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=52+bars+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('Few Days.mp3','Few Days',this)">
+      <div class="track-num"><span class="num">12</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">Few Days</div>
+        <div class="meta">Single · 2022</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=few+days+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong(`Don't Look.mp3`,`Don't Look`,this)">
+      <div class="track-num"><span class="num">13</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">Don't Look</div>
+        <div class="meta">Single · 2022</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=dont+look+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('Jhanjar.mp3','Jhanjar',this)">
+      <div class="track-num"><span class="num">14</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">Jhanjar</div>
+        <div class="meta">Four You EP · 2021</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=jhanjar+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('Him.mp3','Him',this)">
+      <div class="track-num"><span class="num">15</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">Him</div>
+        <div class="meta">BTFU · 2023</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=him+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('Guilty.mp3','Guilty',this)">
+      <div class="track-num"><span class="num">16</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">Guilty</div>
+        <div class="meta">Single · 2022</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=guilty+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('Dont Worry.mp3','Dont Worry',this)">
+      <div class="track-num"><span class="num">17</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">Don't Worry</div>
+        <div class="meta">Single · 2021</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=don't+worry+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('I Really Do.mp3','I Really Do',this)">
+      <div class="track-num"><span class="num">18</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">I Really Do</div>
+        <div class="meta">Single · 2022</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=i+really+do+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('Soch.mp3','Soch',this)">
+      <div class="track-num"><span class="num">19</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">Soch</div>
+        <div class="meta">Four You EP · 2021</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=soch+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong('Top Fella.mp3','Top Fella',this)">
+      <div class="track-num"><span class="num">20</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">Top Fella</div>
+        <div class="meta">Single · 2022</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=top+fella+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    <div class="song-card" onclick="loadSong(`You re U Tho.mp3`,`You're U Tho`,this)">
+      <div class="track-num"><span class="num">21</span><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
+      <div class="song-info">
+        <div class="title">You're U Tho</div>
+        <div class="meta">Single · 2022</div>
+      </div>
+      <div class="song-actions">
+        <button class="heart" onclick="toggleLike(event,this)">♡</button>
+        <a class="yt-tag" href="https://www.youtube.com/results?search_query=you're+u+tho+karan+aujla" target="_blank">▶ YouTube</a>
+      </div>
+    </div>
+
+    
+
+  </div><!-- /playlist-grid -->
+
+  <!-- PLAYER CONTROLS -->
+  <div class="controls">
+    <div id="now-playing">🎵 Select a track to start playing</div>
+    <div class="player-buttons">
+      <button class="ctrl-btn" onclick="prevSong()">⏮ Prev</button>
+      <button class="ctrl-btn" id="shuffleBtn" onclick="toggleShuffle()">🔀 Shuffle</button>
+      <button class="ctrl-btn" id="repeatBtn" onclick="toggleRepeat()">🔁 Repeat</button>
+      <button class="ctrl-btn" onclick="nextSong()">Next ⏭</button>
+    </div>
+    <audio id="main-audio" controls>
+      <source id="audio-src" src="" type="audio/mpeg">
+    </audio>
+    <div class="keyboard-hint">Press <kbd>Space</kbd> to pause/play &nbsp;·&nbsp; <kbd>←</kbd> Prev &nbsp;·&nbsp; <kbd>→</kbd> Next</div>
+  </div>
+
+  <div class="footer">Made with <span>♥</span> for Karan Aujla Fans &nbsp;·&nbsp; 👑 The King of Punjab Rap</div>
+
+</div><!-- /player-container -->
+
+<script>
+let currentCard = null;
+let shuffleOn = false;
+let repeatOn = false;
+
+const audio = document.getElementById('main-audio');
+const audioSrc = document.getElementById('audio-src');
+const display = document.getElementById('now-playing');
+
+function loadSong(src, title, cardEl) {
+  if (currentCard) currentCard.classList.remove('active');
+  currentCard = cardEl;
+  cardEl.classList.add('active');
+  cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  audioSrc.src = src;
+  display.innerHTML = `🎶 Now Playing: <b>${title}</b>`;
+  audio.load();
+  audio.play().catch(() => {});
+}
+
+function getAllVisibleCards() {
+  return [...document.querySelectorAll('.song-card')]
+    .filter(c => c.style.display !== 'none');
+}
+
+function nextSong() {
+  const cards = getAllVisibleCards();
+  if (!cards.length) return;
+  if (shuffleOn) {
+    const idx = Math.floor(Math.random() * cards.length);
+    cards[idx].click();
+    return;
+  }
+  const idx = currentCard ? cards.indexOf(currentCard) : -1;
+  const next = cards[(idx + 1) % cards.length];
+  next.click();
+}
+
+function prevSong() {
+  const cards = getAllVisibleCards();
+  if (!cards.length) return;
+  const idx = currentCard ? cards.indexOf(currentCard) : 0;
+  const prev = cards[(idx - 1 + cards.length) % cards.length];
+  prev.click();
+}
+
+function toggleShuffle() {
+  shuffleOn = !shuffleOn;
+  document.getElementById('shuffleBtn').classList.toggle('active-btn', shuffleOn);
+}
+
+function toggleRepeat() {
+  repeatOn = !repeatOn;
+  audio.loop = repeatOn;
+  document.getElementById('repeatBtn').classList.toggle('active-btn', repeatOn);
+}
+
+// Auto-next when song ends
+audio.addEventListener('ended', () => {
+  if (!repeatOn) nextSong();
+});
+
+// Like toggle
+function toggleLike(e, btn) {
+  e.stopPropagation();
+  btn.classList.toggle('liked');
+  btn.textContent = btn.classList.contains('liked') ? '♥' : '♡';
+}
+
+// Filter / search
+function filterSongs() {
+  const q = document.getElementById('searchBar').value.toLowerCase();
+  const cards = document.querySelectorAll('.song-card');
+  let visible = 0;
+  cards.forEach(card => {
+    const title = card.querySelector('.title').innerText.toLowerCase();
+    const show = title.includes(q);
+    card.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('song-count').textContent = `${visible} song${visible !== 1 ? 's' : ''}`;
+}
+
+// Tab filter
+function filterTab(btn, mode) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const cards = document.querySelectorAll('.song-card');
+  let visible = 0;
+  cards.forEach(card => {
+    if (mode === 'liked') {
+      const heart = card.querySelector('.heart');
+      const show = heart && heart.classList.contains('liked');
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    } else {
+      card.style.display = '';
+      visible++;
+    }
+  });
+  document.getElementById('song-count').textContent = `${visible} song${visible !== 1 ? 's' : ''}`;
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.code === 'Space') {
+    e.preventDefault();
+    audio.paused ? audio.play() : audio.pause();
+  }
+  if (e.code === 'ArrowRight') nextSong();
+  if (e.code === 'ArrowLeft') prevSong();
+});
+</script>
+</body>
+</html>
